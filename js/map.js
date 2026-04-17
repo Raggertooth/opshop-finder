@@ -23,6 +23,11 @@
     setTimeout(function () { map.invalidateSize(); }, 0);
     window.addEventListener('load', function () { map.invalidateSize(); });
 
+    // Click on the map (not on a marker) closes the open detail panel
+    map.on('click', function () {
+      if (window.OpShopPanel) window.OpShopPanel.hide();
+    });
+
     // Expose globally for other modules
     window.appMap = map;
   } catch (e) {
