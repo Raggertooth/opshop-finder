@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var REPORT_EMAIL = 'hello@opshopfinder.com.au';
+  var REPORT_EMAIL = 'hello@opshopsearch.com';
 
   var panel = document.getElementById('detail-panel');
   var overlay = document.getElementById('panel-overlay');

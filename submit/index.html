@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0d0d18" media="(prefers-color-scheme: dark)">
   <title>Submit or Correct a Shop — OpShop Finder Gold Coast</title>
   <meta name="description" content="Submit a new op shop or correct an existing listing on OpShop Finder Gold Coast.">
-  <link rel="canonical" href="https://opshopfinder.com.au/submit/">
+  <link rel="canonical" href="https://opshopsearch.com/submit/">
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -88,7 +88,7 @@
       <strong>Thanks!</strong> Your submission has been received. We'll review it within 7 days and email you if we need clarification.
     </div>
     <div id="form-error" class="error" hidden>
-      <strong>Submission failed.</strong> Please try again or email <a href="mailto:hello@opshopfinder.com.au">hello@opshopfinder.com.au</a> directly.
+      <strong>Submission failed.</strong> Please try again or email <a href="mailto:hello@opshopsearch.com">hello@opshopsearch.com</a> directly.
     </div>
 
     <form id="shop-form" action="https://formspree.io/f/REPLACE_ME" method="POST">
@@ -182,7 +182,7 @@
         data.forEach(function (v, k) { if (k !== '_gotcha' && v) lines.push(k + ': ' + v); });
         var body = encodeURIComponent(lines.join('\n'));
         var subject = encodeURIComponent('OpShop Finder submission: ' + (data.get('shop_name') || 'New'));
-        window.location.href = 'mailto:hello@opshopfinder.com.au?subject=' + subject + '&body=' + body;
+        window.location.href = 'mailto:hello@opshopsearch.com?subject=' + subject + '&body=' + body;
         return;
       }
 

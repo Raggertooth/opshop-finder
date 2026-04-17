@@ -136,4 +136,4 @@ See PRODUCT-BRIEF.md §5 for the full multi-phase plan. Headline next steps afte
 
 ## Project owner
 
-Southern Claw Labs. Issues / corrections: hello@opshopfinder.com.au
+Southern Claw Labs. Issues / corrections: hello@opshopsearch.com

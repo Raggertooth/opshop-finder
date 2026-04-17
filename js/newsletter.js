@@ -6,7 +6,7 @@
 
   var NEWSLETTER_ENDPOINT = '';   // e.g. 'https://buttondown.email/api/emails/embed-subscribe/opshopfinder'
   var ENDPOINT_FIELD = 'email';   // form field name expected by the endpoint
-  var FALLBACK_TO = 'hello@opshopfinder.com.au';
+  var FALLBACK_TO = 'hello@opshopsearch.com';
   var DISMISSED_KEY = 'opshop:newsletter-dismissed:v1';
 
   function ready(fn) {
