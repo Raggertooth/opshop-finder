@@ -1,11 +1,14 @@
-// geolocation.js — "Near me" button: pan to user, sort by Haversine distance
+// geolocation.js — "Near me" button + on-load permission prompt
 (function () {
   'use strict';
 
-  var btn = document.getElementById('locate-btn');
   var map = window.appMap;
-  if (!btn || !map) return;
+  if (!map) return;
 
+  var btn = document.getElementById('locate-btn');
+  var promptEl = document.getElementById('geo-prompt');
+  var allowBtn = document.getElementById('geo-prompt-allow');
+  var denyBtn = document.getElementById('geo-prompt-deny');
   var userMarker = null;
 
   function haversineKm(a, b) {
@@ -27,6 +30,11 @@
     if (ms) setTimeout(function () { toast.hidden = true; }, ms);
   }
 
+  function hideToast() {
+    var toast = document.getElementById('toast');
+    if (toast) toast.hidden = true;
+  }
+
   function placeUserMarker(latlng) {
     if (userMarker) map.removeLayer(userMarker);
     userMarker = L.circleMarker(latlng, {
@@ -38,48 +46,102 @@
     }).addTo(map);
   }
 
-  btn.addEventListener('click', function () {
+  function applyPosition(pos, opts) {
+    var here = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    window.OpShopUserPos = here;
+    placeUserMarker(here);
+    map.setView([here.lat, here.lng], 14);
+
+    if (window.OpShopData) {
+      var shops = window.OpShopData.all();
+      shops.forEach(function (s) {
+        s._distanceKm = haversineKm(here, { lat: s.lat, lng: s.lng });
+      });
+      if (opts && opts.showNearestToast) {
+        var nearest = shops.slice().sort(function (a, b) {
+          return a._distanceKm - b._distanceKm;
+        })[0];
+        if (nearest) {
+          showToast('Nearest: ' + nearest.name + ' (' + nearest._distanceKm.toFixed(1) + ' km)', 4000);
+        }
+      }
+      window.dispatchEvent(new CustomEvent('opshops:located', { detail: here }));
+    }
+  }
+
+  function requestLocation(opts) {
+    var verbose = !!(opts && opts.verbose);
     if (!('geolocation' in navigator)) {
-      showToast('Geolocation not supported on this device', 3000);
+      if (verbose) showToast('Geolocation not supported on this device', 3000);
       return;
     }
-
-    btn.disabled = true;
-    showToast('Finding your location…');
+    if (btn) btn.disabled = true;
+    if (verbose) showToast('Finding your location…');
 
     navigator.geolocation.getCurrentPosition(
       function (pos) {
-        btn.disabled = false;
-        var here = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        window.OpShopUserPos = here;
-        placeUserMarker(here);
-        map.setView([here.lat, here.lng], 14);
-
-        if (window.OpShopData) {
-          var shops = window.OpShopData.all();
-          shops.forEach(function (s) {
-            s._distanceKm = haversineKm(here, { lat: s.lat, lng: s.lng });
-          });
-          var nearest = shops.slice().sort(function (a, b) {
-            return a._distanceKm - b._distanceKm;
-          })[0];
-          if (nearest) {
-            showToast('Nearest: ' + nearest.name + ' (' + nearest._distanceKm.toFixed(1) + ' km)', 4000);
-          }
-          window.dispatchEvent(new CustomEvent('opshops:located', { detail: here }));
-        } else {
-          var toast = document.getElementById('toast');
-          if (toast) toast.hidden = true;
-        }
+        if (btn) btn.disabled = false;
+        applyPosition(pos, { showNearestToast: verbose });
+        if (!verbose) hideToast();
       },
       function (err) {
-        btn.disabled = false;
-        var msg = err.code === err.PERMISSION_DENIED
-          ? 'Location access denied. Try search instead.'
-          : 'Could not get your location.';
-        showToast(msg, 4000);
+        if (btn) btn.disabled = false;
+        if (verbose) {
+          var msg = err.code === err.PERMISSION_DENIED
+            ? 'Location access denied. Try search instead.'
+            : 'Could not get your location.';
+          showToast(msg, 4000);
+        }
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
-  });
+  }
+
+  if (btn) {
+    btn.addEventListener('click', function () {
+      requestLocation({ verbose: true });
+    });
+  }
+
+  function hidePrompt() {
+    if (promptEl) promptEl.hidden = true;
+  }
+
+  if (allowBtn) {
+    allowBtn.addEventListener('click', function () {
+      hidePrompt();
+      requestLocation({ verbose: true });
+    });
+  }
+  if (denyBtn) {
+    denyBtn.addEventListener('click', function () {
+      hidePrompt();
+      try { sessionStorage.setItem('geoPromptDismissed', '1'); } catch (e) {}
+    });
+  }
+
+  // On-load permission check — Option B flow
+  function maybePromptOnLoad() {
+    if (!promptEl) return;
+    try {
+      if (sessionStorage.getItem('geoPromptDismissed') === '1') return;
+    } catch (e) {}
+
+    if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions.query({ name: 'geolocation' }).then(function (result) {
+        if (result.state === 'granted') {
+          requestLocation({ verbose: false });
+        } else if (result.state === 'prompt') {
+          promptEl.hidden = false;
+        }
+        // 'denied' → stay silent
+      }).catch(function () {
+        promptEl.hidden = false;
+      });
+    } else {
+      promptEl.hidden = false;
+    }
+  }
+
+  maybePromptOnLoad();
 })();

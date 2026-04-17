@@ -146,6 +146,13 @@
   <div id="panel-overlay" class="panel-hidden"></div>
 
   <div id="toast" hidden></div>
+  <div id="geo-prompt" hidden role="dialog" aria-labelledby="geo-prompt-text">
+    <span id="geo-prompt-text">Use your location to see nearby op shops?</span>
+    <div class="geo-prompt-actions">
+      <button type="button" id="geo-prompt-deny" class="btn">Not now</button>
+      <button type="button" id="geo-prompt-allow" class="btn btn-primary">Allow</button>
+    </div>
+  </div>
   <button id="sw-update" hidden type="button" aria-live="polite">New version available — tap to refresh</button>
   <a id="embed-attribution" href="https://beta.opshopsearch.com" target="_blank" rel="noopener">Powered by OpShop Finder</a>
 

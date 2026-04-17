@@ -1532,6 +1532,48 @@ html, body {
 }
 .qr-close:hover { background: var(--bg-chip-hover); }
 
+/* === Geolocation prompt banner === */
+#geo-prompt {
+  position: fixed;
+  bottom: calc(80px + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #222;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  z-index: 3400;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: calc(100vw - 32px);
+  width: min(360px, calc(100vw - 32px));
+}
+#geo-prompt[hidden] { display: none; }
+#geo-prompt .geo-prompt-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+#geo-prompt .btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  color: #222;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 36px;
+}
+#geo-prompt .btn-primary {
+  background: var(--color-vinnies);
+  color: #fff;
+  border-color: var(--color-vinnies);
+}
+
 /* === SW update banner === */
 #sw-update {
   position: fixed;
