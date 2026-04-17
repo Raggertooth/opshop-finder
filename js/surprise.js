@@ -29,7 +29,16 @@
     var btn = document.querySelector('[data-chip="surprise"]');
     if (!btn) return;
 
-    btn.addEventListener('click', pick);
+    btn.addEventListener('click', function () {
+      btn.classList.remove('chip-pulse');
+      // Force reflow so the animation re-triggers on rapid clicks
+      void btn.offsetWidth;
+      btn.classList.add('chip-pulse');
+      pick();
+    });
+    btn.addEventListener('animationend', function () {
+      btn.classList.remove('chip-pulse');
+    });
 
     window.addEventListener('opshops:filtered', function (e) {
       matched = e.detail.matched || [];

@@ -490,8 +490,21 @@ html, body {
 .chip-day.chip-active       { background: #2a8c5f; border-color: #2a8c5f; color: #fff; }
 .chip-category.chip-active  { background: #4a3f8a; border-color: #4a3f8a; color: #fff; }
 .chip-heat.chip-active      { background: #E60000; border-color: #E60000; color: #fff; }
-.chip-surprise              { background: linear-gradient(135deg, #f5b400 0%, #E60000 100%); color: #fff; border-color: transparent; font-weight: 600; }
-.chip-surprise:active       { opacity: 0.85; }
+.chip-surprise              { font-weight: 600; }
+.chip-surprise:active {
+  background: linear-gradient(135deg, #f5b400 0%, #E60000 100%);
+  color: #fff;
+  border-color: transparent;
+  transform: scale(0.96);
+}
+.chip-surprise.chip-pulse {
+  animation: chip-surprise-pulse 0.45s ease-out;
+}
+@keyframes chip-surprise-pulse {
+  0%   { background: var(--bg-chip); color: var(--text-primary); }
+  40%  { background: linear-gradient(135deg, #f5b400 0%, #E60000 100%); color: #fff; transform: scale(1.05); }
+  100% { background: var(--bg-chip); color: var(--text-primary); transform: scale(1); }
+}
 .chip-export {
   margin-left: auto;
   font-weight: 600;
