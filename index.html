@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d0d18" media="(prefers-color-scheme: dark)">
+  <meta name="app-version" content="0.1.0">
+  <!-- Uncomment once you've signed up for Plausible (https://plausible.io) -->
+  <!-- <meta name="plausible-domain" content="opshopfinder.com.au"> -->
+  <!-- Uncomment once you've created a Sentry project (https://sentry.io) -->
+  <!-- <meta name="sentry-dsn" content="https://YOUR_KEY@sentry.io/YOUR_PROJECT"> -->
+  <meta name="description" content="Find op shops on the Gold Coast — map, opening hours, charity filters.">
+  <title>OpShop Finder - Gold Coast</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OpShop Finder — Gold Coast">
+  <meta property="og:description" content="Find op shops on the Gold Coast. Map, opening hours, charity filters.">
+  <meta property="og:image" content="icons/icon-512.png">
+  <meta property="og:locale" content="en_AU">
+  <meta property="og:site_name" content="OpShop Finder">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OpShop Finder — Gold Coast">
+  <meta name="twitter:description" content="Find op shops on the Gold Coast. Map, opening hours, charity filters.">
+  <meta name="twitter:image" content="icons/icon-512.png">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="app-header">
+    <h1>OpShop Finder</h1>
+    <p class="subtitle">Gold Coast Op Shops</p>
+    <div id="view-toggle" role="group" aria-label="View mode">
+      <button class="view-btn view-active" data-view="map" aria-pressed="true" aria-label="Map view">Map</button>
+      <button class="view-btn" data-view="list" aria-pressed="false" aria-label="List view">List</button>
+    </div>
+    <details id="header-menu">
+      <summary aria-label="Menu">⋯</summary>
+      <nav>
+        <a href="/suburb/">Browse by suburb</a>
+        <a href="/charity/">Browse by charity</a>
+        <a href="/submit/">Submit a shop</a>
+        <a href="/get-updates/" data-news-open>Get updates</a>
+        <a href="/about/">About</a>
+      </nav>
+    </details>
+  </header>
+
+  <a class="skip-link" href="#map">Skip to map</a>
+
+  <noscript>
+    <div class="noscript-warning">
+      OpShop Finder needs JavaScript to display the map and shop list. Please enable it in your browser.
+    </div>
+  </noscript>
+
+  <div id="search-bar">
+    <input type="text" id="search-input" list="suburb-list" placeholder="Loading shops…" aria-label="Search by suburb, postcode or shop" disabled autocomplete="off">
+    <datalist id="suburb-list"></datalist>
+    <button id="voice-btn" class="btn" aria-label="Search by voice" title="Search by voice" hidden>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/>
+      </svg>
+    </button>
+    <button id="search-clear" class="btn" aria-label="Clear search" hidden>&times;</button>
+    <button id="locate-btn" class="btn btn-locate" aria-label="Find shops near me" title="Near me" disabled>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="filter-strip" role="toolbar" aria-label="Filters">
+    <button class="chip" data-chip="open-now" aria-pressed="false">Open now</button>
+    <button class="chip chip-day" data-chip="open-day" data-day="6" aria-pressed="false">Open Sat</button>
+    <button class="chip chip-day" data-chip="open-day" data-day="0" aria-pressed="false">Open Sun</button>
+    <button class="chip chip-fav" data-chip="favourites" aria-pressed="false">★ Favourites</button>
+    <button class="chip chip-surprise" data-chip="surprise" type="button" title="Show me a random shop" aria-label="Surprise me with a random shop">🎲 Surprise</button>
+    <button class="chip chip-heat" data-chip="heatmap" type="button" aria-pressed="false" title="Toggle heatmap of shop density">🔥 Heat</button>
+    <button class="chip chip-vinnies" data-chip-charity="Vinnies" aria-pressed="false">Vinnies</button>
+    <button class="chip chip-salvos" data-chip-charity="Salvos" aria-pressed="false">Salvos</button>
+    <button class="chip chip-lifeline" data-chip-charity="Lifeline" aria-pressed="false">Lifeline</button>
+    <button class="chip chip-other" data-chip-charity="Other" aria-pressed="false">Other</button>
+    <button class="chip chip-export" id="csv-export" type="button" title="Export as CSV" aria-label="Export as CSV">⤓ CSV</button>
+    <button class="chip chip-reset" data-chip="reset" hidden>Reset</button>
+  </div>
+
+  <section id="list-view" hidden aria-label="Op shops list">
+    <ul id="list-items"></ul>
+    <p id="list-empty" hidden>No shops match these filters.</p>
+  </section>
+
+  <div id="map-container">
+    <div id="map"></div>
+    <div id="map-loading" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Loading op shops…</p>
+    </div>
+    <div id="map-error" hidden>
+      <p>Unable to load map. Showing list view instead.</p>
+      <ul id="shop-list"></ul>
+    </div>
+    <div id="map-empty" hidden aria-live="polite">
+      <p class="empty-title">No shops match these filters</p>
+      <p class="empty-sub">Try removing a filter or broadening your search.</p>
+      <button id="empty-reset" class="btn-directions" type="button">Reset all filters</button>
+    </div>
+  </div>
+
+  <div id="legend">
+    <span class="legend-item"><span class="legend-dot" style="background:#0066CC"></span>Vinnies</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#E60000"></span>Salvos</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#00AA44"></span>Lifeline</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#666666"></span>Other</span>
+  </div>
+
+  <div id="detail-panel" class="panel-hidden" aria-hidden="true">
+    <div class="panel-handle"></div>
+    <button id="panel-close" class="btn" aria-label="Close panel">&times;</button>
+    <div id="panel-content">
+      <div id="panel-hero" class="panel-hero">
+        <img id="panel-photo" alt="" hidden>
+        <div id="panel-initials" class="panel-initials" aria-hidden="true"></div>
+      </div>
+      <h2 id="panel-name"></h2>
+      <p id="panel-charity" class="panel-charity"></p>
+      <div class="panel-field"><strong>Address</strong><span id="panel-address"></span></div>
+      <div class="panel-field"><strong>Suburb</strong><span id="panel-suburb"></span></div>
+      <div class="panel-field"><strong>Phone</strong><a id="panel-phone" href=""></a></div>
+      <div class="panel-field"><strong>Hours</strong><span id="panel-hours"></span></div>
+      <div class="panel-field"><strong>Website</strong><a id="panel-website" href="" target="_blank" rel="noopener"></a></div>
+      <div id="panel-categories" class="panel-categories" hidden></div>
+    </div>
+  </div>
+  <div id="panel-overlay" class="panel-hidden"></div>
+
+  <div id="toast" hidden></div>
+  <button id="sw-update" hidden type="button" aria-live="polite">New version available — tap to refresh</button>
+  <a id="embed-attribution" href="https://opshopfinder.com.au" target="_blank" rel="noopener">Powered by OpShop Finder</a>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <script src="js/hours.js"></script>
+  <script src="js/favourites.js"></script>
+  <script src="js/recent.js"></script>
+  <script src="js/visited.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/detail-panel.js"></script>
+  <script src="js/markers.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/chips.js"></script>
+  <script src="js/geolocation.js"></script>
+  <script src="js/url-state.js"></script>
+  <script src="js/install-prompt.js"></script>
+  <script src="js/a11y.js"></script>
+  <script src="js/list-view.js"></script>
+  <script src="js/csv-export.js"></script>
+  <script src="js/qr.js"></script>
+  <script src="js/op-shop-run.js"></script>
+  <script src="js/surprise.js"></script>
+  <script src="js/heatmap.js"></script>
+  <script src="js/voice-search.js"></script>
+  <script src="js/pull-refresh.js"></script>
+  <script src="js/haptics.js"></script>
+  <script src="js/panel-swipe.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/newsletter.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/konami.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').then(function (reg) {
+          var updateBtn = document.getElementById('sw-update');
+          function offerUpdate(worker) {
+            if (!updateBtn) { worker.postMessage({ type: 'SKIP_WAITING' }); return; }
+            updateBtn.hidden = false;
+            updateBtn.addEventListener('click', function () {
+              worker.postMessage({ type: 'SKIP_WAITING' });
+            }, { once: true });
+          }
+          if (reg.waiting && navigator.serviceWorker.controller) offerUpdate(reg.waiting);
+          reg.addEventListener('updatefound', function () {
+            var nw = reg.installing;
+            if (!nw) return;
+            nw.addEventListener('statechange', function () {
+              if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                offerUpdate(nw);
+              }
+            });
+          });
+          var refreshing = false;
+          navigator.serviceWorker.addEventListener('controllerchange', function () {
+            if (refreshing) return;
+            refreshing = true;
+            window.location.reload();
+          });
+        }).catch(function (err) {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

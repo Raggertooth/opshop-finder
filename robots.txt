@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /sw.js
+Disallow: /icons/
+
+Sitemap: https://opshopfinder.com.au/sitemap.xml

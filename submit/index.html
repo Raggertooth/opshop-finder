@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d0d18" media="(prefers-color-scheme: dark)">
+  <title>Submit or Correct a Shop — OpShop Finder Gold Coast</title>
+  <meta name="description" content="Submit a new op shop or correct an existing listing on OpShop Finder Gold Coast.">
+  <link rel="canonical" href="https://opshopfinder.com.au/submit/">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { overflow: auto; }
+    main { max-width: 640px; margin: 0 auto; padding: 32px 20px 80px; }
+    h1 { font-size: 1.6rem; margin-bottom: 8px; }
+    .lede { color: var(--text-secondary); margin-bottom: 24px; line-height: 1.5; }
+    .crumbs { font-size: 0.85rem; margin-bottom: 16px; }
+    .crumbs a { color: var(--text-link); text-decoration: none; }
+    form { display: flex; flex-direction: column; gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field label { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+    .field .hint { font-size: 0.75rem; color: var(--text-muted); }
+    .field input,
+    .field select,
+    .field textarea {
+      font: inherit;
+      padding: 10px 12px;
+      border: 1px solid var(--border-input);
+      border-radius: 8px;
+      background: var(--bg-input);
+      color: var(--text-primary);
+      min-height: 44px;
+    }
+    .field textarea { min-height: 100px; resize: vertical; }
+    .field-row { display: flex; gap: 12px; }
+    .field-row > .field { flex: 1; }
+    .submit-btn {
+      margin-top: 8px;
+      padding: 14px;
+      background: var(--color-vinnies);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .submit-btn:active { background: #0055aa; }
+    .submit-btn:disabled { opacity: 0.6; cursor: wait; }
+    .success, .error {
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .success { background: rgba(0,170,68,0.12); border: 1px solid #00AA44; color: var(--text-primary); }
+    .error { background: rgba(230,0,0,0.12); border: 1px solid #E60000; color: var(--text-primary); }
+    .info-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <header id="app-header">
+    <h1 style="font-size: 1.2rem;"><a href="/" style="color:#fff;text-decoration:none;">OpShop Finder</a></h1>
+    <p class="subtitle">Gold Coast Op Shops</p>
+  </header>
+  <main>
+    <p class="crumbs"><a href="/">Home</a></p>
+    <h1>Submit or correct a shop</h1>
+    <p class="lede">Spotted a missing op shop, wrong opening hours, or a shop that's closed down? Tell us. We review submissions weekly and update listings within 7 days.</p>
+
+    <div class="info-box">
+      <strong>Before you submit:</strong> please check that the shop isn't already listed. Browse the <a href="/suburb/">suburb directory</a> or search the <a href="/">map</a> first.
+    </div>
+
+    <div id="form-success" class="success" hidden>
+      <strong>Thanks!</strong> Your submission has been received. We'll review it within 7 days and email you if we need clarification.
+    </div>
+    <div id="form-error" class="error" hidden>
+      <strong>Submission failed.</strong> Please try again or email <a href="mailto:hello@opshopfinder.com.au">hello@opshopfinder.com.au</a> directly.
+    </div>
+
+    <form id="shop-form" action="https://formspree.io/f/REPLACE_ME" method="POST">
+      <div class="field">
+        <label for="f-type">Submission type</label>
+        <select id="f-type" name="submission_type" required>
+          <option value="new">New shop (not listed yet)</option>
+          <option value="correction">Correction to existing listing</option>
+          <option value="closure">Shop has closed down</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="f-name">Shop name</label>
+        <input id="f-name" name="shop_name" type="text" required placeholder="e.g. Vinnies Burleigh Heads">
+      </div>
+
+      <div class="field">
+        <label for="f-charity">Charity / organisation</label>
+        <input id="f-charity" name="charity" type="text" placeholder="e.g. Vinnies, Lifeline, Red Cross, Independent">
+      </div>
+
+      <div class="field">
+        <label for="f-address">Street address</label>
+        <input id="f-address" name="address" type="text" required placeholder="e.g. 12 James Street">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="f-suburb">Suburb</label>
+          <input id="f-suburb" name="suburb" type="text" required placeholder="e.g. Burleigh Heads">
+        </div>
+        <div class="field">
+          <label for="f-postcode">Postcode</label>
+          <input id="f-postcode" name="postcode" type="text" pattern="[0-9]{4}" inputmode="numeric" required placeholder="4220">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-hours">Opening hours</label>
+        <input id="f-hours" name="hours" type="text" placeholder="e.g. Mon-Fri 9am-5pm, Sat 9am-2pm">
+        <span class="hint">Match this format if you can — comma-separated day-range slots.</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="f-phone">Phone</label>
+          <input id="f-phone" name="phone" type="tel" placeholder="07 XXXX XXXX">
+        </div>
+        <div class="field">
+          <label for="f-website">Website (optional)</label>
+          <input id="f-website" name="website" type="url" placeholder="https://...">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-notes">Anything else we should know?</label>
+        <textarea id="f-notes" name="notes" placeholder="e.g. categories sold, donation drop-off info, accessibility, source of your information"></textarea>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid var(--border-soft); margin: 8px 0;">
+
+      <div class="field">
+        <label for="f-submitter-name">Your name</label>
+        <input id="f-submitter-name" name="submitter_name" type="text" required>
+      </div>
+      <div class="field">
+        <label for="f-submitter-email">Your email</label>
+        <input id="f-submitter-email" name="submitter_email" type="email" required>
+        <span class="hint">We'll only use this if we need to clarify your submission.</span>
+      </div>
+
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+
+      <button class="submit-btn" type="submit" id="submit-btn">Submit shop</button>
+    </form>
+  </main>
+
+  <script>
+    document.getElementById('shop-form').addEventListener('submit', function (e) {
+      var form = e.target;
+      var btn = document.getElementById('submit-btn');
+      var success = document.getElementById('form-success');
+      var error = document.getElementById('form-error');
+
+      // If Formspree endpoint hasn't been configured, fall back to mailto
+      if (form.action.includes('REPLACE_ME')) {
+        e.preventDefault();
+        var data = new FormData(form);
+        var lines = [];
+        data.forEach(function (v, k) { if (k !== '_gotcha' && v) lines.push(k + ': ' + v); });
+        var body = encodeURIComponent(lines.join('\n'));
+        var subject = encodeURIComponent('OpShop Finder submission: ' + (data.get('shop_name') || 'New'));
+        window.location.href = 'mailto:hello@opshopfinder.com.au?subject=' + subject + '&body=' + body;
+        return;
+      }
+
+      e.preventDefault();
+      success.hidden = true;
+      error.hidden = true;
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      fetch(form.action, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form)
+      }).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        success.hidden = false;
+        form.reset();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }).catch(function () {
+        error.hidden = false;
+      }).finally(function () {
+        btn.disabled = false;
+        btn.textContent = 'Submit shop';
+      });
+    });
+  </script>
+</body>
+</html>

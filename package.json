@@ -1,0 +1,17 @@
+{
+  "name": "opshop-finder",
+  "version": "0.1.0",
+  "description": "OpShop Finder — Gold Coast op shop directory (MVP)",
+  "private": true,
+  "scripts": {
+    "build": "python3 tools/build-suburbs.py",
+    "start": "serve . -l ${PORT:-3000}",
+    "dev": "serve . -l 3000"
+  },
+  "dependencies": {
+    "serve": "^14.2.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
