@@ -81,19 +81,63 @@
     </button>
   </div>
 
-  <div id="filter-strip" role="toolbar" aria-label="Filters">
-    <button class="chip" data-chip="open-now" aria-pressed="false">Open now</button>
-    <button class="chip chip-day" data-chip="open-day" data-day="6" aria-pressed="false">Open Sat</button>
-    <button class="chip chip-day" data-chip="open-day" data-day="0" aria-pressed="false">Open Sun</button>
-    <button class="chip chip-fav" data-chip="favourites" aria-pressed="false">★ Favourites</button>
-    <button class="chip chip-surprise" data-chip="surprise" type="button" title="Show me a random shop" aria-label="Surprise me with a random shop">🎲 Surprise</button>
-    <button class="chip chip-heat" data-chip="heatmap" type="button" aria-pressed="false" title="Toggle heatmap of shop density">🔥 Heat</button>
-    <button class="chip chip-vinnies" data-chip-charity="Vinnies" aria-pressed="false">Vinnies</button>
-    <button class="chip chip-salvos" data-chip-charity="Salvos" aria-pressed="false">Salvos</button>
-    <button class="chip chip-lifeline" data-chip-charity="Lifeline" aria-pressed="false">Lifeline</button>
-    <button class="chip chip-other" data-chip-charity="Other" aria-pressed="false">Other</button>
-    <button class="chip chip-export" id="csv-export" type="button" title="Export as CSV" aria-label="Export as CSV">⤓ CSV</button>
-    <button class="chip chip-reset" data-chip="reset" hidden>Reset</button>
+  <div id="filter-bar" role="toolbar" aria-label="Filters">
+    <button id="filter-open-btn" class="filter-open-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="filter-sheet">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+      <span>Filters</span>
+      <span id="filter-count-badge" class="filter-count-badge" hidden>0</span>
+    </button>
+    <div class="filter-actions">
+      <button class="icon-btn chip-surprise" data-chip="surprise" type="button" title="Show me a random shop" aria-label="Surprise me with a random shop">🎲</button>
+      <button class="icon-btn chip-heat" data-chip="heatmap" type="button" aria-pressed="false" title="Toggle heatmap of shop density" aria-label="Toggle heatmap">🔥</button>
+      <button class="icon-btn chip-export" id="csv-export" type="button" title="Export as CSV" aria-label="Export as CSV">⤓</button>
+    </div>
+  </div>
+
+  <!-- Bottom sheet (hidden by default; opened by #filter-open-btn) -->
+  <div id="filter-sheet-overlay" class="filter-sheet-overlay" hidden></div>
+  <div id="filter-sheet" class="filter-sheet" role="dialog" aria-modal="true" aria-labelledby="filter-sheet-title" aria-hidden="true" hidden>
+    <div class="filter-sheet-handle" aria-hidden="true"></div>
+    <div class="filter-sheet-header">
+      <h2 id="filter-sheet-title">Filters</h2>
+      <button id="filter-sheet-close" type="button" class="icon-btn" aria-label="Close filters">&times;</button>
+    </div>
+    <div class="filter-sheet-body">
+      <section class="filter-section">
+        <h3 class="filter-section-title">When open</h3>
+        <div class="filter-chip-row">
+          <button class="chip" data-chip="open-now" aria-pressed="false">Now</button>
+          <button class="chip chip-day" data-chip="open-day" data-day="6" aria-pressed="false">Saturday</button>
+          <button class="chip chip-day" data-chip="open-day" data-day="0" aria-pressed="false">Sunday</button>
+        </div>
+      </section>
+
+      <section class="filter-section">
+        <h3 class="filter-section-title">Show only</h3>
+        <div class="filter-chip-row">
+          <button class="chip chip-fav" data-chip="favourites" aria-pressed="false">★ Favourites</button>
+        </div>
+      </section>
+
+      <section class="filter-section">
+        <h3 class="filter-section-title">Charity</h3>
+        <div class="filter-chip-row">
+          <button class="chip chip-vinnies" data-chip-charity="Vinnies" aria-pressed="false">Vinnies</button>
+          <button class="chip chip-salvos" data-chip-charity="Salvos" aria-pressed="false">Salvos</button>
+          <button class="chip chip-lifeline" data-chip-charity="Lifeline" aria-pressed="false">Lifeline</button>
+          <button class="chip chip-other" data-chip-charity="Other" aria-pressed="false">Other</button>
+        </div>
+      </section>
+
+      <section class="filter-section" id="filter-section-categories" hidden>
+        <h3 class="filter-section-title">Categories</h3>
+        <div class="filter-chip-row" id="filter-categories-row"></div>
+      </section>
+    </div>
+    <div class="filter-sheet-footer">
+      <button class="chip chip-reset" data-chip="reset" type="button">Clear all</button>
+      <button id="filter-sheet-done" type="button" class="filter-done-btn">Done</button>
+    </div>
   </div>
 
   <section id="list-view" hidden aria-label="Op shops list">
